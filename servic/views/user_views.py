@@ -7,14 +7,17 @@ from ..serializers import UserProfileSerializer, UserRoleChangeSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     '''
-    Hereda de RetrieveUpdateAPIView, lo que permite consultar (GET) y actualizar (PUT/PATCH) el perfil del usuario autenticado.
-    El método get_object(self) retorna self.request.user, es decir, el usuario actualmente autenticado (el que hizo la petición con su token).
+    Esta vista permite que un usuario autenticado consulte (GET) y actualice (PUT/PATCH)
+    su propio perfil. Hereda de RetrieveUpdateAPIView, que ya implementa la lógica para
+    obtener y actualizar un objeto.
     '''
-    serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    # Los datos que devuelve dependen del serializer
-    # En este caso fields = ("id", "email", "first_name", "last_name", "user_type")
+    serializer_class = UserProfileSerializer  # Usa este serializer para transformar el usuario a JSON y validar datos de entrada
+    permission_classes = [permissions.IsAuthenticated]  # Solo usuarios autenticados pueden acceder a esta vista
+
+    # El objeto sobre el que se opera es siempre el usuario autenticado
     def get_object(self):
+        # Retorna el usuario que hizo la petición (request.user)
+        # Así, cada usuario solo puede ver y modificar su propio perfil
         return self.request.user
 
 
